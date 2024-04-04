@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Game of Tik-Tak-To</title>
+</head>
+<body>
+    <h1>Tik-Tak-To</h1>
+
+    <table id="container" border="1" cellspacing="12">
+    </table>
+ </body>
+<script>
+    // ========================================================
+    // GAME STATE
+    // ========================================================
+    let game = [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null]                                                                                                                  
+    ]
+
+    let x = 1
+    let y = 1
+    let turn = "o"
+
+    // ========================================================
+    // DID SOMEONE WIN?
+    // ========================================================
+
+    function didRowWin(game, rowNumber) {
+        const row = game[rowNumber]
+        if (row[0] === row[1] && row[0] === row[2] && row[1] === row[2]) {
+            return row[0];
+        } else {
+            return null;
+        }
+    }
+
+    function getColumn(game, colNumber) {
+        return game.map(row => row[colNumber])
+    }
+
+    function didColWin(game, colNumber) {
+        const col = getColumn(game, colNumber)
+
+        if (col[0] === col[1] && col[0] === col[2] && col[1] === col[2]) {
+            return col[0];
+        } else {
+            return null;
+        }
+    }
+
+    function didCrossDownWin(game, rowNumber, colNumber) {   
+        if (game[0][0] === game[1][1] && game[0][0] === game[2][2] && game[1][1] === game[2][2]) {
+            return game[0][0];
+        } else {
+            return null;
+        }
+    }
+
+    function didCrossUpWin(game, rowNumber, colNumber) {   
+        if (game[2][0] === game[1][1] && game[2][0] === game[0][2] && game[1][1] === game[0][2]) {
+            return game[2][0];
+            console.log ("hihi")
+        } else {
+            return null;
+        }
+    }
+
+     // ========================================================
+
+    function renderGame(game) {
+        // 1. Find the container table and save it in a constant
+        const table = document.getElementById("container");
+
+        table.innerHTML = ""
+        
+        game.forEach((row, rowNumber) => {
+            // 2. Create a <tr> element in the container table using createElement
+            // and rememeber the created element in a constant.
+            const tr = document.createElement("tr");
+            table.appendChild(tr)
+
+            row.forEach((col, colNumber) => {
+                // 3. Create another element - <td> inside of the <tr>
+                // put some test text in it.
+                const td = document.createElement("td");
+
+                td.style.fontSize = "100px"
+                td.style.width = "120px"
+                td.style.height = "120px"
+                td.style.textAlign = "center"
+                td.style.verticalAlign = "middle"
+
+
+                if (y == rowNumber && x == colNumber) {
+                    td.style.backgroundColor = "YellowGreen";  
+                }
+
+                const cellValue = game[rowNumber][colNumber]
+                if (cellValue !== null) {
+                    td.innerText = cellValue
+                }
+
+                tr.appendChild(td)
+            })
+        });
+    }
+
+
+    document.addEventListener('keydown', event => {
+        // event.preventDefault()
+        // console.log(event)
+
+        if (event.code === 'KeyO' && turn == "o") {
+            turn = "x"
+            game[y][x] = "O"
+        }
+
+        if (event.code === 'KeyX' && turn == "x") {
+            turn = "o"
+            game[y][x] = "X"
+        }   
+        
+
+        if (event.code === 'ArrowDown') {
+            if (y > 2) {
+               y = 2 
+            } else if (y < 2) {
+               y = y + 1
+            }
+        }
+
+        if (event.code === 'ArrowUp') {
+            if (y < 0) {
+               y = 0  
+            } else if (y > 0) {
+               y = y - 1
+            }
+        }
+
+        if (event.code === 'ArrowRight') {
+            if (x > 2) {
+               x = 2  
+            } else if (x < 2) {
+               x = x + 1
+            } 
+        }
+
+        if (event.code === 'ArrowLeft') {
+            if (x < 0) {
+               x = 0  
+            } else if (x > 0) {
+               x = x - 1
+            }  
+        }
+
+        renderGame(game)
+       
+        const rowWinner = didRowWin(game, 0) || didRowWin(game, 1) || didRowWin(game, 2)
+        if (rowWinner) {
+            setTimeout(e => {
+                alert(`The winner is ${rowWinner}`)
+            }, 200)
+        }
+
+        const colWinner = didColWin(game, 0) || didColWin(game, 1) || didColWin(game, 2)
+        if (colWinner) {
+            setTimeout(e => {
+                alert(`The winner is ${colWinner}`)
+            }, 200)
+        }
+
+        const crossDownWinner = didCrossDownWin(game, 0, 0) || didCrossDownWin(game, 1, 1) || didCrossDownWin(game, 2, 2)
+        if (crossDownWinner) {
+            setTimeout(e => {
+                alert(`The winner is ${crossDownWinner}`)
+            }, 200)
+        }
+
+        const crossUpWinner = didCrossUpWin(game, 2, 0) || didCrossUpWin(game, 1, 1) || didCrossUpWin(game, 0, 2)
+        if (crossUpWinner) {
+            setTimeout(e => {
+                alert(`The winner is ${crossUpWinner}`)
+            }, 200)
+        }
+
+        console.log(game)
+    })
+    
+    renderGame(game)
+    console.log(game)
+</script>
+</html>
